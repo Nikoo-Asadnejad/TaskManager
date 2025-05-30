@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
-
+from apimodels import TaskModel, TaskResponse
 load_dotenv()
 
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./tasks.db")
@@ -33,15 +33,7 @@ def get_db():
     finally:
         db.close()
 
-class TaskModel(BaseModel):
-    title: str
-    description: str
-    completed: bool = False
 
-class TaskResponse(TaskModel):
-    id: int
-    class Config:
-        orm_mode = True
 
 @app.post("/tasks/", response_model=TaskResponse)
 def create_task(task: TaskModel, db: Session = Depends(get_db)):
